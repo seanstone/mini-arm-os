@@ -20,10 +20,10 @@ void usart_init(void)
 	*(RCC_APB2ENR) |= (uint32_t) (0x00000001 | 0x00000004);
 	*(RCC_APB1ENR) |= (uint32_t) (0x00020000);
 
-	/* USART2 Configuration, Rx->PA3, Tx->PA2 */
-	*(GPIOA_CRL) = 0x00004B00;
+	/* LED->PA5; USART2 Configuration, Rx->PA3, Tx->PA2 */
+	*(GPIOA_CRL) = 0x00104B00;
 	*(GPIOA_CRH) = 0x44444444;
-	*(GPIOA_ODR) = 0x00000000;
+	*(GPIOA_ODR) |= 0x00000020; /* LED(PA5) on */
 	*(GPIOA_BSRR) = 0x00000000;
 	*(GPIOA_BRR) = 0x00000000;
 
@@ -31,6 +31,7 @@ void usart_init(void)
 	*(USART2_CR2) = 0x00000000;
 	*(USART2_CR3) = 0x00000000;
 	*(USART2_CR1) |= 0x2000;
+	*(USART2_BRR) |= 0x45; /* 115200 baud */
 }
 
 void print_str(const char *str)
@@ -47,7 +48,7 @@ void print_str(const char *str)
 #define THREAD_MSP	0xFFFFFFF9
 #define THREAD_PSP	0xFFFFFFFD
 
-/* Initilize user task stack and execute it one time */
+/* Initialize user task stack and execute it one time */
 /* XXX: Implementation of task creation is a little bit tricky. In fact,
  * after the second time we called `activate()` which is returning from
  * exception. But the first time we called `activate()` which is not returning

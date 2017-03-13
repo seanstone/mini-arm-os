@@ -22,3 +22,22 @@ qemu: $(TARGET)
 
 clean:
 	rm -f *.o *.elf *.bin *.list
+
+debug:
+	killall openocd
+	openocd \
+		-s "/usr/share/openocd/scripts" \
+		-f board/st_nucleo_f103rb.cfg \
+		--log_output openocd.log \
+		-c "init" \
+	    -c "reset halt" \
+		&
+	sleep 1
+	arm-none-eabi-gdb -tui \
+		-ex "set pagination off" \
+		-ex "target remote localhost:3333" \
+		-ex "layout split" \
+		-ex "layout regs" \
+		-ex "tui reg all" \
+		-ex "b os.c:74" \
+		os.elf
