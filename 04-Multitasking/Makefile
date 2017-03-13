@@ -24,7 +24,7 @@ clean:
 	rm -f *.o *.elf *.bin *.list
 
 debug:
-	killall openocd
+	killall openocd || true
 	openocd \
 		-s "/usr/share/openocd/scripts" \
 		-f board/st_nucleo_f103rb.cfg \
